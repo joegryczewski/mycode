@@ -1,0 +1,23 @@
+- name: Friday Ansible Challenge
+  hosts: planetexpress
+  connection: ssh    # use the connection plugin, ssh.py (this is the default)
+  gather_facts: yes   # no need to define ansible_facts in this playbook
+
+  tasks:
+   - name: "Create directory on remote hosts"
+     become_user: root
+     become: true
+     file:
+        # the var "fileuser" is a host variable and defined in ~/mycode/inv/dev/hosts
+        path: "/home/{{ fileuser }}/FridayChallenge/"
+        state: directory
+        owner: "{{ fileuser }}"
+        group: "{{ fileuser }}"
+        mode: "0755"
+
+   - name: "Create directory where Space Station documents will reside"
+     copy:
+        # the var "ansible_user" is a host variable AND connection variable
+        # ansible_date_time.date is defined by gather_facts
+        dest: "/home/{{ ansible_user }}/FridayChallenge/FridayChallenge.txt"
+        content: "{{ ansible_date_time.date }} {{ ansible_date_time.time }}"
